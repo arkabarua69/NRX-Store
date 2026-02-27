@@ -67,4 +67,14 @@ def create_app(config_class=Config):
     def health_check():
         return {'status': 'healthy', 'service': 'game-topup-api'}, 200
     
+    # Handle OPTIONS preflight requests
+    @app.after_request
+    def after_request(response):
+        origin = app.config.get('CORS_ORIGINS', ['*'])[0] if app.config.get('CORS_ORIGINS') else '*'
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, PATCH, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Cache-Control, Pragma, Expires, X-Requested-With'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        return response
+    
     return app
