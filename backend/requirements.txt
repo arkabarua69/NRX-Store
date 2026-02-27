@@ -6,6 +6,7 @@ httpx
 supabase
 pydantic
 pydantic-core
+email-validator
 gunicorn
 requests
 PyJWT
