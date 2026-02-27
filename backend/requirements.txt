@@ -6,7 +6,5 @@ pydantic[email]>=2.0.0
 gunicorn==21.2.0
 requests>=2.31.0
 PyJWT>=2.0.0
-httpx<0.25,>=0.24.0
-httpcore>=0.18
 bcrypt==4.1.2
 numpy>=1.24.0
