@@ -2,6 +2,7 @@ services:
   - type: web
     name: nrx-store-backend
     env: python
+    runtime: python-3.11.0
     region: singapore
     plan: free
     buildCommand: pip install --upgrade pip && pip install -r requirements.txt
@@ -11,5 +12,3 @@ services:
         value: production
       - key: FLASK_DEBUG
         value: False
-      - key: PYTHON_VERSION
-        value: 3.11.0
