@@ -1,6 +1,5 @@
 import { ShoppingCart, Heart, Star, Diamond, Zap, TrendingUp, Crown } from 'lucide-react';
 import { Product } from '@/lib/types';
-import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useWishlist } from '@/contexts/WishlistContext';
 

@@ -74,7 +74,9 @@ export interface Order {
   contact_email?: string;
   contact_phone?: string;
   userEmail?: string; // Alias for contact_email
-  userName?: string; // From user metadata
+  userName?: string; // From user metadata (camelCase)
+  user_name?: string; // From database (snake_case)
+  display_name?: string; // Display name variant
   phoneNumber?: string; // Alias for contact_phone
   
   // Payment info
@@ -138,4 +140,3 @@ export interface OrderVerificationRequest {
   verify: boolean;
   notes?: string;
 }
-
