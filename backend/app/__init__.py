@@ -70,8 +70,19 @@ def create_app(config_class=Config):
     # Handle OPTIONS preflight requests
     @app.after_request
     def after_request(response):
-        origin = app.config.get('CORS_ORIGINS', ['*'])[0] if app.config.get('CORS_ORIGINS') else '*'
-        response.headers['Access-Control-Allow-Origin'] = origin
+        from flask import request
+        origin = request.headers.get('Origin')
+        allowed_origins = app.config.get('CORS_ORIGINS', ['*'])
+        
+        # If the request origin is in our allowed list, use it
+        if origin and origin in allowed_origins:
+            response.headers['Access-Control-Allow-Origin'] = origin
+        elif '*' in allowed_origins:
+            response.headers['Access-Control-Allow-Origin'] = '*'
+        elif allowed_origins:
+            # Fallback to first allowed origin
+            response.headers['Access-Control-Allow-Origin'] = allowed_origins[0]
+            
         response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, PATCH, OPTIONS'
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Cache-Control, Pragma, Expires, X-Requested-With'
         response.headers['Access-Control-Allow-Credentials'] = 'true'
