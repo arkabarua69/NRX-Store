@@ -1,0 +1,61 @@
+{
+  "name": "Nrx Store - গেম টপ আপ শপ বাংলাদেশ",
+  "short_name": "Nrx Store",
+  "description": "বাংলাদেশের সবচেয়ে বিশ্বস্ত গেম টপ আপ স্টোর। Free Fire, PUBG, Mobile Legends ডায়মন্ড ও UC। ৮ মিনিটে তাৎক্ষণিক ডেলিভারি, সর্বনিম্ন দাম, ১০০% নিরাপদ।",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FF3B30",
+  "orientation": "portrait-primary",
+  "lang": "bn",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "games", "entertainment", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "/logo.jpg",
+      "sizes": "540x720",
+      "type": "image/jpeg",
+      "label": "Nrx Store Homepage"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "স্টোর",
+      "short_name": "Store",
+      "description": "ডায়মন্ড প্যাকেজ দেখুন",
+      "url": "/store",
+      "icons": [{ "src": "/logo.jpg", "sizes": "192x192", "type": "image/jpeg" }]
+    },
+    {
+      "name": "ড্যাশবোর্ড",
+      "short_name": "Dashboard",
+      "description": "আপনার অর্ডার দেখুন",
+      "url": "/dashboard",
+      "icons": [{ "src": "/logo.jpg", "sizes": "192x192", "type": "image/jpeg" }]
+    },
+    {
+      "name": "অফার",
+      "short_name": "Offers",
+      "description": "বিশেষ অফার দেখুন",
+      "url": "/store?featured=true",
+      "icons": [{ "src": "/logo.jpg", "sizes": "192x192", "type": "image/jpeg" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
