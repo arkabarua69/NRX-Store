@@ -27,8 +27,8 @@ def get_admin_notifications():
         # Build query - get admin notifications for this admin user
         query = supabase.table('notifications').select('*')
         
-        # Admin sees notifications where recipient_type='admin' AND user_id matches
-        query = query.eq('user_id', str(user.id)).eq('recipient_type', 'admin')
+        # Admin sees notifications where user_id matches
+        query = query.eq('user_id', str(user.id))
         
         # Filter by importance if requested
         if important_only:
@@ -67,7 +67,7 @@ def mark_admin_notification_as_read(notification_id):
         response = supabase.table('notifications').update({
             'is_read': True,
             'read_at': datetime.utcnow().isoformat()
-        }).eq('id', notification_id).eq('user_id', str(user.id)).eq('recipient_type', 'admin').execute()
+        }).eq('id', notification_id).eq('user_id', str(user.id)).execute()
         
         if not response.data:
             return error_response('Admin notification not found', status_code=404)
@@ -93,7 +93,7 @@ def mark_all_admin_notifications_as_read():
         response = supabase.table('notifications').update({
             'is_read': True,
             'read_at': datetime.utcnow().isoformat()
-        }).eq('user_id', str(user.id)).eq('recipient_type', 'admin').eq('is_read', False).execute()
+        }).eq('user_id', str(user.id)).eq('is_read', False).execute()
         
         count = len(response.data) if response.data else 0
         
@@ -115,7 +115,7 @@ def delete_admin_notification(notification_id):
         supabase = get_supabase_admin()
         
         # Delete notification - ensure it's an admin notification for this user
-        response = supabase.table('notifications').delete().eq('id', notification_id).eq('user_id', str(user.id)).eq('recipient_type', 'admin').execute()
+        response = supabase.table('notifications').delete().eq('id', notification_id).eq('user_id', str(user.id)).execute()
         
         if not response.data:
             return error_response('Admin notification not found', status_code=404)
@@ -138,7 +138,7 @@ def clear_all_admin_notifications():
         supabase = get_supabase_admin()
         
         # Delete all admin notifications for this admin
-        response = supabase.table('notifications').delete().eq('user_id', str(user.id)).eq('recipient_type', 'admin').execute()
+        response = supabase.table('notifications').delete().eq('user_id', str(user.id)).execute()
         
         count = len(response.data) if response.data else 0
         
@@ -160,7 +160,7 @@ def get_admin_notification_stats():
         supabase = get_supabase_admin()
         
         # Get all admin notifications for this admin
-        all_response = supabase.table('notifications').select('id, is_read, is_important').eq('user_id', str(user.id)).eq('recipient_type', 'admin').execute()
+        all_response = supabase.table('notifications').select('id, is_read, is_important').eq('user_id', str(user.id)).execute()
         
         all_notifications = all_response.data or []
         
