@@ -1,0 +1,4 @@
+# file: C:\Users\macgu\Desktop\Nrx\backend\app\__init__.py
+# hypothesis_version: 6.151.9
+
+[200, 3600, '/', '/*', '/api', '/api/*', '/api/admin', '/api/auth', '/api/chatbot', '/api/faq', '/api/games', '/api/notifications', '/api/orders', '/api/orders-v2', '/api/products', '/api/reviews', '/api/settings', '/api/simple-orders', '/api/stats', '/api/support', '/api/upload', '/api/users', '/health', '1.0.0', 'Authorization', 'CORS_ORIGINS', 'Cache-Control', 'Content-Type', 'DELETE', 'Expires', 'GET', 'NRX Store API', 'OPTIONS', 'PATCH', 'POST', 'PUT', 'Pragma', 'X-Requested-With', 'allow_headers', 'api', 'endpoints', 'expose_headers', 'game-topup-api', 'health', 'healthy', 'max_age', 'message', 'methods', 'origins', 'running', 'service', 'status', 'supports_credentials', 'version']

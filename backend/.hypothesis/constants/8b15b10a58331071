@@ -1,0 +1,4 @@
+# file: C:\Users\macgu\Desktop\Nrx\backend\app\utils\auth.py
+# hypothesis_version: 6.151.9
+
+[401, 403, 'Admin', 'Authorization', 'Bearer ', 'admin', 'admin-db', 'email', 'error', 'id', 'name', 'obj', 'role', 'user_metadata']

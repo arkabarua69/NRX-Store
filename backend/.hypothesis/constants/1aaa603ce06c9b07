@@ -1,0 +1,4 @@
+# file: C:\Users\macgu\Desktop\Nrx\backend\app\controllers\notification_controller.py
+# hypothesis_version: 6.151.9
+
+[404, 500, '*', '/<notification_id>', '/clear-all', '/mark-all-read', 'DELETE', 'GET', 'Notification deleted', 'PUT', 'count', 'created_at', 'false', 'id', 'important_only', 'is_important', 'is_read', 'limit', 'message', 'metadata', 'normal', 'notifications', 'priority', 'read_at', 'related_order_id', 'related_support_id', 'title', 'true', 'type', 'unread_only', 'user_id']

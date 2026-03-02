@@ -1,0 +1,4 @@
+# file: C:\Users\macgu\Desktop\Nrx\backend\app\config.py
+# hypothesis_version: 6.151.9
+
+[100, ',', 'ADMIN_EMAIL', 'CORS_ORIGINS', 'FLASK_DEBUG', 'FLASK_ENV', 'False', 'HS256', 'JWT_SECRET', 'PAYMENT_GATEWAY_KEY', 'SECRET_KEY', 'SUPABASE_KEY', 'SUPABASE_SERVICE_KEY', 'SUPABASE_URL', 'True', 'admin@example.com', 'default', 'development', 'production']
