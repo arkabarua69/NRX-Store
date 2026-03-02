@@ -100,8 +100,8 @@ export default function ChatBot() {
 
     try {
       // Call backend chatbot API with RL brain
-      const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
-      const response = await fetch(`${API_BASE}/api/chatbot`, {
+      const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      const response = await fetch(`${API_BASE}/chatbot`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
