@@ -17,29 +17,19 @@ def get_notifications():
         # Convert user.id to string to ensure compatibility
         user_id_str = str(user.id)
         
-        # Check if user is admin
-        user_data = supabase.table('users').select('role').eq('id', user_id_str).single().execute()
-        is_admin = user_data.data and user_data.data.get('role') == 'admin'
+        print(f"🔍 Fetching notifications for user: {user.email} (ID: {user_id_str})")
         
         # Query parameters
         important_only = request.args.get('important_only', 'false').lower() == 'true'
         unread_only = request.args.get('unread_only', 'false').lower() == 'true'
         limit = int(request.args.get('limit', 50))
         
-        # Build query
-        query = supabase.table('notifications').select('*')
+        # Build query - ONLY get notifications for THIS user
+        query = supabase.table('notifications').select('*').eq('user_id', user_id_str)
         
-        # Filter by recipient type
-        if is_admin:
-            # Admin sees admin notifications
-            query = query.eq('recipient_type', 'admin')
-            
-            # Filter by importance if requested
-            if important_only:
-                query = query.eq('is_important', True)
-        else:
-            # Regular users see their own user notifications
-            query = query.eq('user_id', user_id_str).eq('recipient_type', 'user')
+        # Filter by importance if requested
+        if important_only:
+            query = query.eq('is_important', True)
         
         # Filter unread only
         if unread_only:
@@ -50,7 +40,7 @@ def get_notifications():
         
         notifications = response.data or []
         
-        print(f"✅ Fetched {len(notifications)} notifications for {'admin' if is_admin else 'user'}: {user.email}")
+        print(f"✅ Fetched {len(notifications)} notifications for user: {user.email}")
         print(f"   Important only: {important_only}, Unread only: {unread_only}")
         
         return success_response(notifications)
@@ -155,12 +145,15 @@ def clear_all_notifications():
 
 # Helper function to create notification
 def create_notification(user_id, notification_type, title, message, priority='normal', is_important=False, related_order_id=None, related_support_id=None, metadata=None):
-    """Create a new notification"""
+    """Create a new notification for a specific user"""
     try:
         supabase = get_supabase_admin()
         
+        # Ensure user_id is a string
+        user_id_str = str(user_id)
+        
         notification_data = {
-            'user_id': user_id,
+            'user_id': user_id_str,
             'type': notification_type,
             'title': title,
             'message': message,
@@ -180,7 +173,8 @@ def create_notification(user_id, notification_type, title, message, priority='no
         
         response = supabase.table('notifications').insert(notification_data).execute()
         
-        print(f"✅ Notification created: {notification_type} for user: {user_id}")
+        print(f"✅ Notification created: {notification_type} for user: {user_id_str}")
+        print(f"   Title: {title}")
         
         return response.data[0] if response.data else None
         

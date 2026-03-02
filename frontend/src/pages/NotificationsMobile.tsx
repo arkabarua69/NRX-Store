@@ -42,6 +42,8 @@ export default function NotificationsMobile() {
       setNotifications(prev =>
         prev.map(n => (n.id === id ? { ...n, is_read: true } : n))
       );
+      // Refresh notification count
+      window.dispatchEvent(new Event('notificationsUpdated'));
     } catch (error) {
       console.error('Error marking as read:', error);
     }
@@ -51,6 +53,8 @@ export default function NotificationsMobile() {
     try {
       await notificationService.markAllAsRead();
       setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+      // Refresh the page to update notification count in header
+      window.dispatchEvent(new Event('notificationsUpdated'));
       toast.success('সব নোটিফিকেশন পড়া হয়েছে');
     } catch (error) {
       console.error('Error marking all as read:', error);
@@ -150,6 +154,8 @@ export default function NotificationsMobile() {
     selectedIds.forEach(id => markAsRead(id));
     setSelectedIds([]);
     setSelectionMode(false);
+    // Refresh notification count
+    window.dispatchEvent(new Event('notificationsUpdated'));
     toast.success('নোটিফিকেশন পড়া হয়েছে');
   };
 

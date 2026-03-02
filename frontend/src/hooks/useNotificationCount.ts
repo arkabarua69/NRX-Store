@@ -27,7 +27,16 @@ export function useNotificationCount() {
     // Poll every 30 seconds
     const interval = setInterval(fetchUnreadCount, 30000);
 
-    return () => clearInterval(interval);
+    // Listen for manual refresh events
+    const handleRefresh = () => {
+      fetchUnreadCount();
+    };
+    window.addEventListener('notificationsUpdated', handleRefresh);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('notificationsUpdated', handleRefresh);
+    };
   }, []);
 
   const refreshCount = () => {
@@ -77,7 +86,16 @@ export function useAdminNotificationCount() {
     // Poll every 30 seconds
     const interval = setInterval(fetchUnreadCount, 30000);
 
-    return () => clearInterval(interval);
+    // Listen for manual refresh events
+    const handleRefresh = () => {
+      fetchUnreadCount();
+    };
+    window.addEventListener('notificationsUpdated', handleRefresh);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('notificationsUpdated', handleRefresh);
+    };
   }, []);
 
   const refreshCount = () => {
