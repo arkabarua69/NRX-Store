@@ -1,7 +1,7 @@
 {
-  "name": "Nrx Store - গেম টপ আপ শপ বাংলাদেশ",
-  "short_name": "Nrx Store",
-  "description": "বাংলাদেশের সবচেয়ে বিশ্বস্ত গেম টপ আপ স্টোর। Free Fire, PUBG, Mobile Legends ডায়মন্ড ও UC। ৮ মিনিটে তাৎক্ষণিক ডেলিভারি, সর্বনিম্ন দাম, ১০০% নিরাপদ।",
+  "name": "NRX Store - গেম টপ আপ শপ বাংলাদেশ",
+  "short_name": "NRX Store",
+  "description": "বাংলাদেশের সবচেয়ে বিশ্বস্ত গেম টপ আপ স্টোর। Free Fire ডায়মন্ড, PUBG UC, Mobile Legends ডায়মন্ড। ৫-১৫ মিনিটে তাৎক্ষণিক ডেলিভারি, সাশ্রয়ী দাম, ১০০% নিরাপদ।",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -27,10 +27,10 @@
   "categories": ["shopping", "games", "entertainment", "lifestyle"],
   "screenshots": [
     {
-      "src": "/logo.jpg",
-      "sizes": "540x720",
+      "src": "/banner.jpg",
+      "sizes": "1200x630",
       "type": "image/jpeg",
-      "label": "Nrx Store Homepage"
+      "label": "NRX Store - Game Top Up Shop"
     }
   ],
   "shortcuts": [

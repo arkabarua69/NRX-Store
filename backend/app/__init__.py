@@ -6,10 +6,13 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
+    # Clean up CORS origins (remove trailing slashes and whitespace)
+    cors_origins = [origin.strip().rstrip('/') for origin in app.config['CORS_ORIGINS'] if origin.strip()]
+    
     # Enable CORS with all necessary headers
     CORS(app, resources={
         r"/*": {
-            "origins": app.config['CORS_ORIGINS'],
+            "origins": cors_origins,
             "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
             "allow_headers": [
                 "Content-Type", 
@@ -62,30 +65,22 @@ def create_app(config_class=Config):
     app.register_blueprint(chatbot_bp, url_prefix='/api/chatbot')
     app.register_blueprint(stats_bp, url_prefix='/api/stats')
     
+    # Root endpoint
+    @app.route('/')
+    def root():
+        return {
+            'message': 'NRX Store API',
+            'status': 'running',
+            'version': '1.0.0',
+            'endpoints': {
+                'health': '/health',
+                'api': '/api/*'
+            }
+        }, 200
+    
     # Health check endpoint
     @app.route('/health')
     def health_check():
         return {'status': 'healthy', 'service': 'game-topup-api'}, 200
-    
-    # Handle OPTIONS preflight requests
-    @app.after_request
-    def after_request(response):
-        from flask import request
-        origin = request.headers.get('Origin')
-        allowed_origins = app.config.get('CORS_ORIGINS', ['*'])
-        
-        # If the request origin is in our allowed list, use it
-        if origin and origin in allowed_origins:
-            response.headers['Access-Control-Allow-Origin'] = origin
-        elif '*' in allowed_origins:
-            response.headers['Access-Control-Allow-Origin'] = '*'
-        elif allowed_origins:
-            # Fallback to first allowed origin
-            response.headers['Access-Control-Allow-Origin'] = allowed_origins[0]
-            
-        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, PATCH, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Cache-Control, Pragma, Expires, X-Requested-With'
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        return response
     
     return app

@@ -51,21 +51,26 @@ export default function AdminDashboard() {
 
   // Hide Sonner toaster on admin dashboard
   useEffect(() => {
-    // Add CSS to hide toaster
-    const style = document.createElement('style');
-    style.id = 'admin-hide-toaster';
-    style.innerHTML = `
-      [data-sonner-toaster] {
-        display: none !important;
-      }
-    `;
-    document.head.appendChild(style);
+    // Check if style already exists
+    let styleElement = document.getElementById('admin-hide-toaster') as HTMLStyleElement;
+    
+    if (!styleElement) {
+      // Create new style element only if it doesn't exist
+      styleElement = document.createElement('style');
+      styleElement.id = 'admin-hide-toaster';
+      styleElement.innerHTML = `
+        [data-sonner-toaster] {
+          display: none !important;
+        }
+      `;
+      document.head.appendChild(styleElement);
+    }
 
     // Cleanup on unmount
     return () => {
-      const styleElement = document.getElementById('admin-hide-toaster');
-      if (styleElement) {
-        styleElement.remove();
+      const element = document.getElementById('admin-hide-toaster');
+      if (element && element.parentNode) {
+        element.parentNode.removeChild(element);
       }
     };
   }, []);
