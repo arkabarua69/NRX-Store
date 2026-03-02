@@ -161,58 +161,101 @@ class ChatbotBrain:
         }
     
     def detect_intent(self, message: str) -> str:
-        """Detect user intent using keyword matching and context"""
+        """Advanced intent detection with NLP-like features and context awareness"""
         message_lower = message.lower()
         
-        # Greeting patterns
-        greeting_keywords = ['hi', 'hello', 'হাই', 'হ্যালো', 'স্বাগতম', 'নমস্কার', 'আসসালামু', 'good morning', 'good evening']
-        if any(kw in message_lower for kw in greeting_keywords):
-            return "greeting"
+        # Multi-word phrase matching (more accurate than single keywords)
+        intent_patterns = {
+            "greeting": [
+                'hi', 'hello', 'হাই', 'হ্যালো', 'স্বাগতম', 'নমস্কার', 'আসসালামু', 
+                'good morning', 'good evening', 'good afternoon', 'hey', 'হেই',
+                'কেমন আছেন', 'how are you', 'what\'s up', 'কি খবর'
+            ],
+            "product_inquiry": [
+                'diamond', 'ডায়মন্ড', 'price', 'দাম', 'package', 'প্যাকেজ', 
+                'কিনতে', 'buy', 'কত', 'offer', 'অফার', 'discount', 'ছাড়',
+                'কোন প্যাকেজ', 'which package', 'best deal', 'সেরা ডিল',
+                'free fire', 'ফ্রি ফায়ার', 'pubg', 'পাবজি', 'game', 'গেম',
+                'কত টাকা', 'how much', 'cost', 'খরচ', 'বাজেট', 'budget',
+                'recommend', 'সাজেস্ট', 'suggest', 'পরামর্শ', 'কোনটা ভালো'
+            ],
+            "order_status": [
+                'order', 'অর্ডার', 'delivery', 'ডেলিভারি', 'status', 'স্ট্যাটাস', 
+                'কবে', 'when', 'পাবো', 'track', 'ট্র্যাক', 'কোথায়', 'where',
+                'আসবে', 'will arrive', 'পৌঁছাবে', 'reach', 'কতক্ষণে', 'how long',
+                'order id', 'অর্ডার আইডি', 'tracking', 'ট্র্যাকিং', 'পেলাম না', 'not received'
+            ],
+            "payment_help": [
+                'payment', 'পেমেন্ট', 'bkash', 'বিকাশ', 'nagad', 'নগদ', 
+                'rocket', 'রকেট', 'pay', 'টাকা', 'পাঠাবো', 'send money',
+                'কিভাবে পেমেন্ট', 'how to pay', 'payment method', 'পেমেন্ট মেথড',
+                'transaction', 'ট্রানজেকশন', 'failed', 'ব্যর্থ', 'সফল হয়নি',
+                'account number', 'অ্যাকাউন্ট নম্বর', 'নম্বর', 'number'
+            ],
+            "delivery_info": [
+                'delivery', 'ডেলিভারি', 'time', 'সময়', 'কতক্ষণ', 'how long', 
+                'পৌঁছাবে', 'কত মিনিট', 'minutes', 'মিনিট', 'fast', 'দ্রুত',
+                'instant', 'তাৎক্ষণিক', 'কখন পাবো', 'when will i get',
+                'delivery time', 'ডেলিভারি টাইম', 'আসতে', 'arrive'
+            ],
+            "complaint": [
+                'problem', 'সমস্যা', 'issue', 'wrong', 'ভুল', 'complaint', 'অভিযোগ',
+                'না পেয়েছি', 'not received', 'পাইনি', 'didn\'t get', 'কাজ করছে না',
+                'not working', 'ভুল হয়েছে', 'mistake', 'error', 'এরর', 'খারাপ', 'bad',
+                'refund', 'রিফান্ড', 'টাকা ফেরত', 'money back', 'cancel', 'বাতিল'
+            ],
+            "appreciation": [
+                'thanks', 'ধন্যবাদ', 'thank you', 'good', 'ভালো', 'excellent', 
+                'অসাধারণ', 'great', 'awesome', 'দারুণ', 'perfect', 'পারফেক্ট',
+                'love it', 'পছন্দ হয়েছে', 'satisfied', 'সন্তুষ্ট', 'happy', 'খুশি',
+                'best', 'সেরা', 'amazing', 'অসাধারণ', 'fantastic', 'চমৎকার'
+            ],
+            "farewell": [
+                'bye', 'বাই', 'goodbye', 'আল্লাহ হাফেজ', 'see you', 'দেখা হবে',
+                'talk later', 'পরে কথা হবে', 'gotta go', 'যেতে হবে', 'leaving', 'যাচ্ছি',
+                'good night', 'শুভ রাত্রি', 'take care', 'ভালো থাকুন'
+            ]
+        }
         
-        # Product inquiry patterns
-        product_keywords = ['diamond', 'ডায়মন্ড', 'price', 'দাম', 'package', 'প্যাকেজ', 'কিনতে', 'buy', 'কত', 'offer', 'অফার']
-        if any(kw in message_lower for kw in product_keywords):
-            return "product_inquiry"
+        # Score each intent based on keyword matches
+        intent_scores = {}
+        for intent, keywords in intent_patterns.items():
+            score = sum(1 for kw in keywords if kw in message_lower)
+            # Boost score for exact phrase matches
+            score += sum(2 for kw in keywords if len(kw.split()) > 1 and kw in message_lower)
+            if score > 0:
+                intent_scores[intent] = score
         
-        # Order status patterns
-        order_keywords = ['order', 'অর্ডার', 'delivery', 'ডেলিভারি', 'status', 'স্ট্যাটাস', 'কবে', 'when', 'পাবো']
-        if any(kw in message_lower for kw in order_keywords):
-            return "order_status"
+        # Return intent with highest score
+        if intent_scores:
+            best_intent = max(intent_scores, key=intent_scores.get)
+            # Only return if confidence is high enough
+            if intent_scores[best_intent] >= 1:
+                return best_intent
         
-        # Payment patterns
-        payment_keywords = ['payment', 'পেমেন্ট', 'bkash', 'বিকাশ', 'nagad', 'নগদ', 'rocket', 'রকেট', 'pay', 'টাকা']
-        if any(kw in message_lower for kw in payment_keywords):
-            return "payment_help"
-        
-        # Delivery patterns
-        delivery_keywords = ['delivery', 'ডেলিভারি', 'time', 'সময়', 'কতক্ষণ', 'how long', 'পৌঁছাবে']
-        if any(kw in message_lower for kw in delivery_keywords):
-            return "delivery_info"
-        
-        # Complaint patterns
-        complaint_keywords = ['problem', 'সমস্যা', 'issue', 'না', 'not', 'wrong', 'ভুল', 'complaint', 'অভিযোগ']
-        if any(kw in message_lower for kw in complaint_keywords):
-            return "complaint"
-        
-        # Appreciation patterns
-        appreciation_keywords = ['thanks', 'ধন্যবাদ', 'thank you', 'good', 'ভালো', 'excellent', 'অসাধারণ', 'great']
-        if any(kw in message_lower for kw in appreciation_keywords):
-            return "appreciation"
-        
-        # Farewell patterns
-        farewell_keywords = ['bye', 'বাই', 'goodbye', 'আল্লাহ হাফেজ', 'see you', 'দেখা হবে']
-        if any(kw in message_lower for kw in farewell_keywords):
-            return "farewell"
+        # Context-based intent detection
+        if len(self.context_memory) > 0:
+            last_intent = self.context_memory[-1].get('intent')
+            # If user is continuing a conversation, maintain context
+            if last_intent in ['product_inquiry', 'order_status', 'payment_help']:
+                # Check if message is a follow-up question
+                followup_indicators = ['আর', 'and', 'also', 'এছাড়া', 'কি', 'what', 'how', 'কিভাবে']
+                if any(ind in message_lower for ind in followup_indicators):
+                    return last_intent
         
         return "general_chat"
     
     def get_response(self, user_message: str, context: Dict = None) -> str:
-        """Get AI response using RL-based selection"""
+        """Get AI response using advanced RL-based selection with sentiment and context"""
         # Detect intent
         intent = self.detect_intent(user_message)
         
+        # Analyze sentiment
+        sentiment = self._analyze_sentiment(user_message)
+        
         # Update conversation state
         self.conversation_state = intent
+        self.sentiment_score = sentiment
         
         # Get possible responses
         possible_responses = self.templates.get(intent, self.templates["general_chat"])
@@ -220,11 +263,15 @@ class ChatbotBrain:
         # Use RL to select best response
         response = self._select_response_with_rl(intent, possible_responses, context)
         
+        # Add dynamic content based on context
+        response = self._enhance_response_with_context(response, user_message, intent, context)
+        
         # Add to context memory
         self.context_memory.append({
             "user_message": user_message,
             "bot_response": response,
             "intent": intent,
+            "sentiment": sentiment,
             "timestamp": datetime.now().isoformat()
         })
         
@@ -233,6 +280,96 @@ class ChatbotBrain:
             self.context_memory = self.context_memory[-10:]
         
         return response
+    
+    def _analyze_sentiment(self, message: str) -> float:
+        """Analyze sentiment of user message (0=negative, 0.5=neutral, 1=positive)"""
+        message_lower = message.lower()
+        
+        # Positive indicators
+        positive_words = [
+            'good', 'ভালো', 'great', 'দারুণ', 'excellent', 'অসাধারণ', 
+            'love', 'পছন্দ', 'happy', 'খুশি', 'thanks', 'ধন্যবাদ',
+            'perfect', 'পারফেক্ট', 'best', 'সেরা', 'amazing', 'চমৎকার',
+            'awesome', 'fantastic', 'wonderful', 'nice', 'সুন্দর'
+        ]
+        
+        # Negative indicators
+        negative_words = [
+            'bad', 'খারাপ', 'problem', 'সমস্যা', 'issue', 'wrong', 'ভুল',
+            'not', 'না', 'never', 'কখনো না', 'hate', 'ঘৃণা', 'angry', 'রাগ',
+            'disappointed', 'হতাশ', 'terrible', 'ভয়ানক', 'worst', 'সবচেয়ে খারাপ',
+            'refund', 'রিফান্ড', 'cancel', 'বাতিল', 'complaint', 'অভিযোগ'
+        ]
+        
+        positive_count = sum(1 for word in positive_words if word in message_lower)
+        negative_count = sum(1 for word in negative_words if word in message_lower)
+        
+        # Calculate sentiment score
+        if positive_count + negative_count == 0:
+            return 0.5  # Neutral
+        
+        sentiment = (positive_count - negative_count) / (positive_count + negative_count + 1)
+        # Normalize to 0-1 range
+        return max(0, min(1, (sentiment + 1) / 2))
+    
+    def _enhance_response_with_context(self, response: str, user_message: str, intent: str, context: Dict = None) -> str:
+        """Enhance response with dynamic content based on context"""
+        message_lower = user_message.lower()
+        
+        # Add product recommendations for product inquiries
+        if intent == "product_inquiry":
+            # Check if user mentioned budget
+            budget_match = re.search(r'(\d+)\s*(টাকা|taka|tk)', message_lower)
+            if budget_match:
+                budget = int(budget_match.group(1))
+                recommendation = self._get_product_recommendation(budget)
+                if recommendation:
+                    response += f"\n\n{recommendation}"
+            
+            # Check if user is asking for best deal
+            if any(word in message_lower for word in ['best', 'সেরা', 'ভালো', 'recommend', 'সাজেস্ট']):
+                response += "\n\n💡 আমার সাজেশন: ১০০০ ডায়মন্ড প্যাকেজ সবচেয়ে জনপ্রিয় এবং ভ্যালু ফর মানি!"
+        
+        # Add empathy for complaints
+        if intent == "complaint" and self.sentiment_score < 0.4:
+            empathy_prefix = "🙏 আপনার সমস্যা শুনে সত্যিই খারাপ লাগলো। আমরা এখনই সমাধান করছি!\n\n"
+            response = empathy_prefix + response
+        
+        # Add encouragement for appreciation
+        if intent == "appreciation" and self.sentiment_score > 0.6:
+            response += "\n\n🌟 আপনার মতো গ্রাহক পেয়ে আমরা সত্যিই গর্বিত!"
+        
+        # Add time-based greetings
+        if intent == "greeting":
+            hour = datetime.now().hour
+            if 5 <= hour < 12:
+                response += "\n\n☀️ সুপ্রভাত! আপনার দিনটি শুভ হোক!"
+            elif 12 <= hour < 17:
+                response += "\n\n🌤️ শুভ অপরাহ্ন!"
+            elif 17 <= hour < 21:
+                response += "\n\n🌆 শুভ সন্ধ্যা!"
+            else:
+                response += "\n\n🌙 শুভ রাত্রি!"
+        
+        # Add urgency for order status queries
+        if intent == "order_status":
+            if any(word in message_lower for word in ['কবে', 'when', 'কতক্ষণ', 'how long']):
+                response += "\n\n⚡ জরুরি? আমাদের এক্সপ্রেস ডেলিভারি মাত্র ৫-১৫ মিনিট!"
+        
+        return response
+    
+    def _get_product_recommendation(self, budget: int) -> str:
+        """Get product recommendation based on budget"""
+        if budget < 100:
+            return "💰 আপনার বাজেট একটু কম। ১০০ ডায়মন্ড প্যাকেজ মাত্র ৮৫ টাকা - সবচেয়ে সাশ্রয়ী!"
+        elif budget < 200:
+            return "💎 আপনার বাজেটে ১০০ ডায়মন্ড (৮৫ টাকা) পারফেক্ট!"
+        elif budget < 500:
+            return "🎯 আপনার বাজেটে ৫০০ ডায়মন্ড (৪২০ টাকা) সেরা চয়েস!"
+        elif budget < 1000:
+            return "⭐ আপনার বাজেটে ১০০০ ডায়মন্ড (৮৩০ টাকা) - সবচেয়ে জনপ্রিয়!"
+        else:
+            return "🔥 আপনার বাজেটে ২০০০ ডায়মন্ড (১৬৫০ টাকা) + ২৫০ ফ্রি ডায়মন্ড!"
     
     def _select_response_with_rl(self, state: str, responses: List[str], context: Dict = None) -> str:
         """Select response using reinforcement learning"""
