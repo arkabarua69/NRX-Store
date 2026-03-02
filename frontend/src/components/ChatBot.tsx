@@ -57,7 +57,7 @@ export default function ChatBot() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      text: "👋 স্বাগতম! NRX Store এ আপনাকে অসংখ্য ধন্যবাদ। আমি আপনার পার্সোনাল অ্যাসিস্ট্যান্ট। কিভাবে আপনাকে সাহায্য করতে পারি?",
+      text: "আসসালামু আলাইকুম! 👋\n\nআমি রাফি, NRX Store এর কাস্টমার সাপোর্ট টিম থেকে। আপনাকে সাহায্য করতে পেরে আমি সত্যিই খুশি!\n\n💬 আমি আপনাকে সাহায্য করতে পারি:\n• ডায়মন্ড প্যাকেজ সিলেকশন\n• অর্ডার স্ট্যাটাস চেক\n• পেমেন্ট সাপোর্ট\n• যেকোনো সমস্যা সমাধান\n\nআপনার কোন প্রশ্ন আছে? আমাকে জিজ্ঞেস করুন! 😊",
       sender: "bot",
       timestamp: new Date(),
     },
@@ -166,10 +166,10 @@ export default function ChatBot() {
                   <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
                 </div>
                 <div>
-                  <h3 className="font-black text-lg">🤖 NRX AI Support</h3>
+                  <h3 className="font-black text-lg">রাফি - সাপোর্ট এক্সিকিউটিভ</h3>
                   <p className="text-xs text-white/90 font-bold flex items-center gap-1">
                     <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                    Online • ২৪/৭ সাপোর্ট
+                    এখনই অনলাইন • ২৪/৭ সাপোর্ট
                   </p>
                 </div>
               </div>
