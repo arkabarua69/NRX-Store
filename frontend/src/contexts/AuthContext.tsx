@@ -45,9 +45,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [userData, setUserData] = useState<{ name: string; email: string; avatar?: string } | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Check if user is admin by calling backend API
+  // Check if user is admin by calling backend API (with caching)
   const checkAdminStatus = async (email: string): Promise<boolean> => {
     try {
+      // Check cache first (5 minute cache)
+      const cacheKey = `admin_status_${email}`;
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        const { isAdmin, timestamp } = JSON.parse(cached);
+        if (Date.now() - timestamp < 5 * 60 * 1000) { // 5 minutes
+          console.log(`✅ Using cached admin status for ${email}: ${isAdmin}`);
+          return isAdmin;
+        }
+      }
+
       console.log(`🔍 Checking admin status for: ${email}`);
       
       const response = await fetch(`${API_BASE}/admin/check`, {
@@ -66,6 +77,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const result = await response.json();
       const isAdmin = result.data?.isAdmin || false;
       
+      // Cache the result
+      localStorage.setItem(cacheKey, JSON.stringify({
+        isAdmin,
+        timestamp: Date.now()
+      }));
+      
       console.log(`${isAdmin ? '✅' : '❌'} Admin check result for ${email}: ${isAdmin}`);
       
       return isAdmin;
@@ -82,26 +99,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
-          // Fetch custom avatar from backend
           const token = session.access_token;
+          const userEmail = session.user.email || "";
+
+          // Fetch profile and check admin status in parallel for speed
+          const [profileResponse, isUserAdmin] = await Promise.all([
+            fetch(`${API_BASE}/users/profile`, {
+              headers: { 'Authorization': `Bearer ${token}` },
+            }).catch(() => null),
+            checkAdminStatus(userEmail)
+          ]);
+
           let customAvatar = null;
           let displayName = null;
 
-          try {
-            const response = await fetch(`${API_BASE}/users/profile`, {
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            });
-
-            if (response.ok) {
-              const result = await response.json();
-              customAvatar = result.data?.avatar_url;
-              displayName = result.data?.display_name;
-              console.log('✅ Custom avatar from DB:', customAvatar);
-            }
-          } catch (error) {
-            console.log('ℹ️ No custom avatar in database');
+          if (profileResponse && profileResponse.ok) {
+            const result = await profileResponse.json();
+            customAvatar = result.data?.avatar_url;
+            displayName = result.data?.display_name;
+            console.log('✅ Custom avatar from DB:', customAvatar);
           }
 
           // Get OAuth avatar from user metadata
@@ -122,11 +138,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName || session.user.user_metadata?.name || session.user.email?.split("@")[0] || "User")}&background=FF3B30&color=fff&bold=true`;
           
           console.log('🎨 Final avatar URL:', avatar);
-          
-          const userEmail = session.user.email || "";
-          
-          // Check admin status from backend
-          const isUserAdmin = await checkAdminStatus(userEmail);
           
           const userData = {
             id: session.user.id,
@@ -162,26 +173,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Listen for auth changes
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        // Fetch custom avatar from backend
         const token = session.access_token;
+        const userEmail = session.user.email || "";
+
+        // Fetch profile and check admin status in parallel for speed
+        const [profileResponse, isUserAdmin] = await Promise.all([
+          fetch(`${API_BASE}/users/profile`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+          }).catch(() => null),
+          checkAdminStatus(userEmail)
+        ]);
+
         let customAvatar = null;
         let displayName = null;
 
-        try {
-          const response = await fetch(`${API_BASE}/users/profile`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-          });
-
-          if (response.ok) {
-            const result = await response.json();
-            customAvatar = result.data?.avatar_url;
-            displayName = result.data?.display_name;
-            console.log('✅ Custom avatar from DB:', customAvatar);
-          }
-        } catch (error) {
-          console.log('ℹ️ No custom avatar in database');
+        if (profileResponse && profileResponse.ok) {
+          const result = await profileResponse.json();
+          customAvatar = result.data?.avatar_url;
+          displayName = result.data?.display_name;
+          console.log('✅ Custom avatar from DB:', customAvatar);
         }
 
         // Get OAuth avatar from user metadata
@@ -201,11 +211,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName || session.user.user_metadata?.name || session.user.email?.split("@")[0] || "User")}&background=FF3B30&color=fff&bold=true`;
         
         console.log('🎨 Final avatar URL:', avatar);
-        
-        const userEmail = session.user.email || "";
-        
-        // Check admin status from backend
-        const isUserAdmin = await checkAdminStatus(userEmail);
         
         const userData = {
           id: session.user.id,
